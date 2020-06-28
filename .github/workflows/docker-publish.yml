@@ -1,0 +1,45 @@
+on: 
+  push:
+  schedule:
+    - cron: '0 1 * * *'
+name: Build and publish to DockerHub
+jobs:
+  stable:
+    name: stable
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Build and Publish stable to DockerHub
+        uses: westonsteimel/action-docker-publish@main
+        with:
+          registry: 'docker.io'
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          image_name: 'rust-static-builder'
+          build_context: 'stable'
+          dockerfile_path: 'stable/Dockerfile'
+          tag_ref: false
+          tag_latest: false
+          tag_version: true
+          tag_sha: false
+          tag_timestamp: false
+  nightly:
+    name: nightly
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Build and Publish nightly to DockerHub
+        uses: westonsteimel/action-docker-publish@main
+        with:
+          registry: 'docker.io'
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          image_name: 'rust-static-builder'
+          build_context: 'nightly'
+          dockerfile_path: 'nightly/Dockerfile'
+          tag_ref: false
+          tag_latest: false
+          tag_version: true
+          tag_sha: false
+          tag_timestamp: true
+
