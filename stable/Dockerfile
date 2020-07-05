@@ -1,8 +1,10 @@
 ARG TOOLCHAIN="stable"
+ARG TARGET
 
 FROM alpine:latest
 
 ARG TOOLCHAIN
+ARG TARGET
 
 RUN apk update && apk add --no-cache \
     ca-certificates \
@@ -32,9 +34,10 @@ USER builder
 
 RUN curl https://sh.rustup.rs -sSf | \
     sh -s -- -y --default-toolchain "${TOOLCHAIN}" && \
-    /home/builder/.cargo/bin/rustup target add x86_64-unknown-linux-musl
+    /home/builder/.cargo/bin/rustup target add "${TARGET}"
 
 ENV PATH=/home/builder/.cargo/bin:/usr/bin:/bin
+ENV TARGET "${TARGET}"
 
 WORKDIR /build
 
@@ -43,7 +46,5 @@ ENTRYPOINT ["/home/builder/build.sh"]
 
 LABEL org.opencontainers.image.title="rust-static-builder" \
     org.opencontainers.image.description="Docker image to build statically linked Linux executables from Rust projects" \
-    org.opencontainers.image.url="https://github.com/westonsteimel/docker-rust-static-builder" \
-    org.opencontainers.image.source="https://github.com/westonsteimel/docker-rust-static-builder" \
     org.opencontainers.image.version="${TOOLCHAIN}" \
     version="${TOOLCHAIN}"
