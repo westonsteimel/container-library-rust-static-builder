@@ -34,7 +34,7 @@ USER builder
 
 RUN curl https://sh.rustup.rs -sSf | \
     sh -s -- -y --default-toolchain "${TOOLCHAIN}" && \
-    /home/builder/.cargo/bin/rustup target add "${TARGET}" x86_64-unknown-linux-musl
+    /home/builder/.cargo/bin/rustup target add "${TARGET}"
 
 ENV PATH=/home/builder/.cargo/bin:/usr/bin:/bin
 ENV TARGET "${TARGET}"
