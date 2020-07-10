@@ -1,10 +1,18 @@
 ARG TOOLCHAIN="nightly"
 ARG TARGET
+ARG SOURCE
+ARG REVISION
+ARG CREATED
+ARG VERSION="${TOOLCHAIN}"
 
 FROM alpine:edge
 
 ARG TARGET
 ARG TOOLCHAIN
+ARG SOURCE
+ARG REVISION
+ARG CREATED
+ARG VERSION
 
 RUN apk update && apk add --no-cache \
     ca-certificates \
@@ -34,7 +42,7 @@ USER builder
 
 RUN curl https://sh.rustup.rs -sSf | \
     sh -s -- -y --default-toolchain "${TOOLCHAIN}" && \
-    /home/builder/.cargo/bin/rustup target add "${TARGET}" x86_64-unknown-linux-musl
+    /home/builder/.cargo/bin/rustup target add "${TARGET}"
 
 ENV PATH=/home/builder/.cargo/bin:/usr/bin:/bin
 ENV TARGET "${TARGET}"
@@ -46,5 +54,7 @@ ENTRYPOINT ["/home/builder/build.sh"]
 
 LABEL org.opencontainers.image.title="rust-static-builder" \
     org.opencontainers.image.description="Docker image to build statically linked Linux executables from Rust projects" \
-    org.opencontainers.image.version="${TOOLCHAIN}" \
-    version="${TOOLCHAIN}"
+    org.opencontainers.image.source="${SOURCE}" \
+    org.opencontainers.image.revision="${REVISION}" \
+    org.opencontainers.image.created="${CREATED}" \
+    org.opencontainers.image.version="${VERSION}"

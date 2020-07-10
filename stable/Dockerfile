@@ -1,10 +1,18 @@
 ARG TOOLCHAIN="stable"
 ARG TARGET
+ARG SOURCE
+ARG REVISION
+ARG CREATED
+ARG VERSION="${TOOLCHAIN}"
 
 FROM alpine:latest
 
-ARG TOOLCHAIN
 ARG TARGET
+ARG TOOLCHAIN
+ARG SOURCE
+ARG REVISION
+ARG CREATED
+ARG VERSION
 
 RUN apk update && apk add --no-cache \
     ca-certificates \
@@ -46,5 +54,7 @@ ENTRYPOINT ["/home/builder/build.sh"]
 
 LABEL org.opencontainers.image.title="rust-static-builder" \
     org.opencontainers.image.description="Docker image to build statically linked Linux executables from Rust projects" \
-    org.opencontainers.image.version="${TOOLCHAIN}" \
-    version="${TOOLCHAIN}"
+    org.opencontainers.image.source="${SOURCE}" \
+    org.opencontainers.image.revision="${REVISION}" \
+    org.opencontainers.image.created="${CREATED}" \
+    org.opencontainers.image.version="${VERSION}"
