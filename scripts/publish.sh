@@ -53,18 +53,37 @@ echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdi
 
 IFS=',' read -ra TAGS <<< "$DOCKER_TAGS"
 for tag in "${TAGS[@]}"; do
-    docker image build --platform "linux/amd64" \
-        --build-arg TARGET \
+    docker buildx build --platform "linux/amd64" \
+        --build-arg TARGET="x86_64-unknown-linux-musl" \
         --build-arg SOURCE \
         --build-arg REVISION \
         --build-arg CREATED \
         --build-arg VERSION \
-        --tag "${BASE_NAME}:${tag}" \
+        --output "type=image,push=true" \
+        --tag "${BASE_NAME}:${tag}-linux-x86_64" \
         --file "${DOCKER_FILE}" \
         "${DOCKER_BUILD_CONTEXT}"
 
-done
+    docker buildx build --platform "linux/arm64" \
+        --build-arg TARGET="aarch64-unknown-linux-musl" \
+        --build-arg SOURCE \
+        --build-arg REVISION \
+        --build-arg CREATED \
+        --build-arg VERSION \
+        --output "type=image,push=true" \
+        --tag "${BASE_NAME}:${tag}-linux-aarch64" \
+        --file "${DOCKER_FILE}" \
+        "${DOCKER_BUILD_CONTEXT}"
 
-docker push "${BASE_NAME}"
+    # Currently, we have to push the images before we can create a manifest for them 
+    # docker push "${BASE_NAME}"
+
+    docker manifest create "${BASE_NAME}:${tag}" \
+        "${BASE_NAME}:${tag}-linux-x86_64" \
+        "${BASE_NAME}:${tag}-linux-aarch64" \
+
+    docker manifest push "${BASE_NAME}:${tag}"
+
+done
 
 docker logout

@@ -12,7 +12,7 @@ else
 	echo "Not stripping"
 fi
 
-if [ -z ${NOCOMPRESS+x} ]; then
+if [ -z ${NOCOMPRESS+x} ] && [$TARGETPLATFORM = "linux/amd64"]; then
      upx --lzma --best `find target/${TARGET}/release/ -type f -maxdepth 1 -executable`
 else
     echo "Not compressing"

@@ -31,7 +31,7 @@ RUN apk update && apk add --no-cache \
     sqlite-dev \
     sqlite-static \
     xz-dev \
-    upx
+    && if [$TARGETPLATFORM = "linux/amd64"]; then apk add --no-cache upx; fi
 
 RUN addgroup builder \
     && adduser -G builder -s /bin/sh -D builder \
