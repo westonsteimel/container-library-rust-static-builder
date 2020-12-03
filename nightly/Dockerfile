@@ -46,6 +46,7 @@ RUN curl https://sh.rustup.rs -sSf | \
 
 ENV PATH=/home/builder/.cargo/bin:/usr/bin:/bin
 ENV TARGET "${TARGET}"
+ENV TARGETPLATFORM "${TARGETPLATFORM}"
 
 WORKDIR /build
 
