@@ -1,18 +1,11 @@
-ARG TOOLCHAIN="nightly"
-ARG TARGET
-ARG SOURCE
-ARG REVISION
-ARG CREATED
-ARG VERSION="${TOOLCHAIN}"
+ARG VERSION="nightly"
 
-FROM alpine:edge
+FROM alpine:latest
 
-ARG TARGET
-ARG TOOLCHAIN
-ARG SOURCE
-ARG REVISION
-ARG CREATED
+ARG TARGETPLATFORM
 ARG VERSION
+ENV TARGETPLATFORM="${TARGETPLATFORM}"
+ENV RUST_VERSION="${VERSION}"
 
 RUN apk update && apk add --no-cache \
     ca-certificates \
@@ -40,13 +33,9 @@ RUN addgroup builder \
 
 USER builder
 
-RUN curl https://sh.rustup.rs -sSf | \
-    sh -s -- -y --default-toolchain "${TOOLCHAIN}" && \
-    /home/builder/.cargo/bin/rustup target add "${TARGET}"
-
-ENV PATH=/home/builder/.cargo/bin:/usr/bin:/bin
-ENV TARGET "${TARGET}"
-ENV TARGETPLATFORM "${TARGETPLATFORM}"
+ENV PATH="/home/builder/.cargo/bin:/usr/bin:/bin"
+COPY install.sh /home/builder/install.sh
+RUN /home/builder/install.sh
 
 WORKDIR /build
 
@@ -54,8 +43,6 @@ COPY build.sh /home/builder/build.sh
 ENTRYPOINT ["/home/builder/build.sh"]
 
 LABEL org.opencontainers.image.title="rust-static-builder" \
-    org.opencontainers.image.description="Docker image to build statically linked Linux executables from Rust projects" \
-    org.opencontainers.image.source="${SOURCE}" \
-    org.opencontainers.image.revision="${REVISION}" \
-    org.opencontainers.image.created="${CREATED}" \
+    org.opencontainers.image.description="Docker image to build statically-linked Linux executables for Rust projects" \
     org.opencontainers.image.version="${VERSION}"
+
