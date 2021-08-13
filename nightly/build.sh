@@ -35,4 +35,5 @@ else
     echo "Not compressing"
 fi
 
-
+mkdir -p /build/artifacts
+cp -r target/${RUST_TARGET}/release/* /build/artifacts/
