@@ -1,4 +1,4 @@
-ARG VERSION="1.80.0"
+ARG VERSION="1.80.1"
 
 FROM alpine:latest
 
